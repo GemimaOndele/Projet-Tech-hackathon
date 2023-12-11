@@ -1,0 +1,98 @@
+Projet : création d’un carnet d'adresses avec Python et SQLite.
+Objectif :
+L'objectif de ce projet est de créer un carnet d'adresses en utilisant Python et une base de
+données pour stocker les informations de contact.
+Fonctionnalités suggérées :
+● Ajout de contacts : Permettez aux utilisateurs d'ajouter de nouveaux contacts avec
+des informations telles que le nom, le prénom, l'adresse e-mail, le numéro de
+téléphone, etc.
+● Recherche de contacts : Implémentez une fonction de recherche qui permet aux
+utilisateurs de rechercher des contacts par nom ou par adresse e-mail.
+● Modification de contacts : Autorisez la modification des informations d'un contact
+existant.
+● Suppression de contacts : Permettez aux utilisateurs de supprimer des contacts de
+la liste.
+● Enregistrement dans une base de données : Utilisez une base de données
+(SQLite, par exemple) pour stocker les informations des contacts de manière
+persistante entre les exécutions du programme.
+Conseils supplémentaires :
+● Assurez-vous que le programme gère les cas où le contact recherché n'existe pas.
+● Vous pouvez utiliser la bibliothèque sqlite3 pour interagir avec la base de données.
+Étapes de réalisation :
+● Conception : Vous devez concevoir la structure du carnet d'adresses, en identifiant
+les classes, les fonctions et les interactions nécessaires.
+● Implémentation : Vous devez commencer par la gestion des contacts en mémoire,
+puis en ajoutant la persistance des données avec la base de données.
+● Test : Vous devez tester votre programme avec différents scénarios pour s'assurer
+qu'il fonctionne correctement.
+● Présentation : le jour de la soutenance vous devez préparer une courte présentation
+pour expliquer vos choix de conception, les difficultés rencontrées et les solutions
+trouvées.
+● Toute amélioration et/ou idée originale implémentée et présentée dans le projet
+sera récompensée par des points bonus.
+
+
+
+Voici un exemple simple d'algorithme en Python pour le projet de carnet d'adresses avec SQLite. Assurez-vous d'avoir la bibliothèque SQLite installée (pip install sqlite3).
+import sqlite3
+
+# Connexion à la base de données (le fichier sera créé s'il n'existe pas)
+conn = sqlite3.connect('carnet_adresses.db')
+cursor = conn.cursor()
+
+# Création de la table des contacts
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS contacts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nom TEXT,
+        prenom TEXT,
+        email TEXT,
+        telephone TEXT
+    )
+''')
+conn.commit()
+
+def ajouter_contact(nom, prenom, email, telephone):
+    cursor.execute('''
+        INSERT INTO contacts (nom, prenom, email, telephone)
+        VALUES (?, ?, ?, ?)
+    ''', (nom, prenom, email, telephone))
+    conn.commit()
+
+def rechercher_contact(recherche):
+    cursor.execute('''
+        SELECT * FROM contacts
+        WHERE nom LIKE ? OR prenom LIKE ? OR email LIKE ?
+    ''', ('%' + recherche + '%', '%' + recherche + '%', '%' + recherche + '%'))
+    return cursor.fetchall()
+
+def modifier_contact(id_contact, nom, prenom, email, telephone):
+    cursor.execute('''
+        UPDATE contacts
+        SET nom = ?, prenom = ?, email = ?, telephone = ?
+        WHERE id = ?
+    ''', (nom, prenom, email, telephone, id_contact))
+    conn.commit()
+
+def supprimer_contact(id_contact):
+    cursor.execute('''
+        DELETE FROM contacts
+        WHERE id = ?
+    ''', (id_contact,))
+    conn.commit()
+
+# Exemple d'utilisation
+ajouter_contact('Doe', 'John', 'john.doe@email.com', '123456789')
+ajouter_contact('Smith', 'Alice', 'alice.smith@email.com', '987654321')
+
+resultat_recherche = rechercher_contact('Doe')
+print(resultat_recherche)
+
+modifier_contact(1, 'Doe', 'John', 'john.doe.updated@email.com', '999999999')
+
+supprimer_contact(2)
+
+
+Cet algorithme crée une base de données SQLite avec une table "contacts" et définit des fonctions pour ajouter, rechercher, modifier et supprimer des contacts. Assurez-vous de personnaliser davantage en fonction de vos besoins et de gérer les cas spécifiques à votre projet.
+
+
